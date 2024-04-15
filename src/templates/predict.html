@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Prediction</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+      
+      body {
+        background-color: #e9ecef;
+        font-family: 'Nunito', sans-serif;
+      }
+      .container {
+        max-width: 960px;
+      }
+      .main-title {
+        text-align: center;
+        color: #007bff;
+        font-size: 2.5rem;
+        text-shadow: 1px 1px 2px #c6c5c5;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 1.8rem; /* Smaller size for tablets and below */
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .main-title {
+        font-size: 1.4rem; /* Even smaller size for small screens */
+      }
+    }
+      .card {
+        border: none;
+      }
+      .form-control {
+        border-radius: 20px;
+      }
+      .btn-primary {
+        border-radius: 20px;
+        padding: 10px 24px;
+        transition: background-color 0.3s ease;
+      }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    
+
+      .prediction-card {
+        margin-top: 20px;
+        background: linear-gradient(145deg, #0056b3, #0088fe);
+        color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+      .prediction-card .card-body {
+        padding: 20px;
+        text-align: center;
+      }
+      .form-label {
+        font-weight: 600;
+      }
+      #month{
+        cursor: pointer;
+      }
+
+      #resultText{
+        font-weight: bold;
+        font-size: 1.2em;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      }
+
+      .form-range {
+        width: 100%; /* Full width */
+        height: 2rem; /* Increased height for better usability */
+        background-color: transparent; /* No background */
+        cursor: pointer;
+      }
+      
+      .badge.bg-primary {
+        font-size: 1.2em; /* Increase font size for better visibility */
+        float: right; /* Align the badge to the right of the slider */
+        background-color: #007bff; /* Ensuring color consistency */
+      }
+
+      @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .prediction-card {
+        animation: slideUp 0.5s ease-out forwards;
+    }
+
+      
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center align-items-center p-3">
+        <div class="col-12 text-center">
+          <h2 class="main-title" id="title">Weather Prediction Model</h2>
+        </div>
+        <!-- Dropdown for selecting the prediction type -->
+        <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+          <select class="form-select" style="width: auto;" id="predictType" onchange="updateFormAndTitle()">
+              <option value="">Select Prediction Type</option>
+              <option value="month">Month</option>
+              <option value="hour">Hour</option>
+              <option value="humid">Humidity</option>
+              <option value="wind_speed">Wind Speed</option>
+              <!-- <option value="precip">Precipitation</option> -->
+              <option value="temp">Temperature</option>
+              <option value="pressure">Pressure</option>
+          </select>
+        </div>
+        
+    </div>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <form id="predictionForm">
+            <div class="mb-3">
+              <label for="month" class="form-label">Month <i class="fas fa-calendar-alt"></i></label>
+              <!-- <input type="number" class="form-control" id="month" name="month" required /> -->
+              <select class="form-control" id="month" name="month" required>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="hour" class="form-label">Hour <i class="fas fa-clock"></i></label>
+              <input type="range" class="form-range" id="hour" name="hour" min="0" max="23" required>
+              <span id="hourValue" class="badge bg-primary">12:00 PM</span>
+            </div>
+            <div class="mb-3">
+              <label for="humid" class="form-label">Humidity (%) <i class="fas fa-cloud"></i></i></label>
+              <input type="number" class="form-control" id="humid" name="humid" required />
+            </div>
+            <div class="mb-3">
+              <label for="wind_speed" class="form-label">Wind Speed (mph) <i class="fas fa-wind"></i></label>
+              <input type="number" class="form-control" id="wind_speed" name="wind_speed" required />
+            </div>
+            <div class="mb-3">
+              <label for="temp" class="form-label">Temperature (F) <i class="fas fa-thermometer-half"></i></label>
+              <input type="number" class="form-control" id="temp" name="temp" required />
+            </div>
+            <!-- <div class="mb-3">
+              <label for="precip" class="form-label">Precipitation (inches) <i class="fas fa-tint"></i></label>
+              <input type="number" class="form-control" id="precip" name="precip" required />
+            </div> -->
+            <div class="mb-3">
+              <label for="pressure" class="form-label">Pressure (millibars) <i class="fas fa-filter"></i></i></label>
+              <input type="number" class="form-control" id="pressure" name="pressure" required />
+            </div>
+            <div class="d-grid gap-2">
+              <button type="button" id="predict_btn" class="btn btn-primary" onclick="submitForm()">Predict Weather</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Prediction -->
+      <div class="card prediction-card m-3" id="predictionResult" style="display: none">
+        <div class="card-body">
+            <h5 class="card-title">Prediction Result <i class="fas fa-chart-line"></i></h5>
+            <p class="card-text" id="resultText"></p>
+        </div>
+    </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+
+      const PREDICTION_MAP = {
+        "temp": {
+          name: "Temperature",
+          unit: "F"
+        },
+        "wind_speed": {
+          name: "Wind Speed",
+          unit: "mph"
+        },
+        "pressure": {
+          name: "Pressure",
+          unit: "millibars"
+        },
+        "precip": {
+          name: "Precipitation",
+          unit: "Inches"
+        },
+        "humid": {
+          name: "Humidity",
+          unit: "%"
+        },
+        "month": {
+          name: "Month",
+          unit: ""
+        },
+        "hour": {
+          name: "Hour",
+          unit: ""
+        },
+      }
+
+      document.getElementById('hour').addEventListener('input', function () {
+        const hour = parseInt(this.value);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const hourFormatted = hour % 12 || 12; // Convert 0 to 12 for AM
+        document.getElementById('hourValue').textContent = `${hourFormatted}:00 ${ampm}`;
+      });
+      
+      
+
+      function updateFormAndTitle() {
+        const predict_btn = document.getElementById("predict_btn")
+        var selectedType = document.getElementById('predictType').value;
+        var title = document.getElementById('title');
+        var inputs = document.querySelectorAll('#predictionForm .mb-3');
+        inputs.forEach(input => {
+            input.style.display = 'block'; // Reset all inputs to be visible
+        });
+
+        if (selectedType) {
+            title.textContent = 'Predicting ' + document.querySelector(`label[for="${selectedType}"]`).innerText;
+            document.getElementById(selectedType).parentNode.style.display = 'none'; // Hide selected input
+            predict_btn.innerHTML = `Predict ${PREDICTION_MAP[selectedType].name}`
+        } else {
+            title.textContent = 'Weather Prediction Model'; // Reset title if no selection
+        }
+    }
+
+
+    function numberToMonth(num) {
+      console.log(num)
+      const months = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+      ];
+  
+      // Check if the number is within the valid range of 1-12
+      if (num >= 1 && num <= 12) {
+          return months[num - 1]; // Subtract 1 cause 0 indexed
+      } else {
+          return "Invalid month"; // Return error message 
+      }
+  }
+
+      function submitForm() {
+        const form = document.getElementById("predictionForm");
+        const selectedType = document.getElementById('predictType').value;
+        const formData = new FormData();
+        const url = "{{ url_for('predict') }}";
+
+        if(selectedType == ""){
+          alert("Please select a Prediction Type")
+          return;
+        }
+
+        // Loop over form elements and append only those not related to the prediction type
+        Array.from(form.elements).forEach(element => {
+          if (element.name && element.id !== selectedType) {
+              formData.append(element.name, element.value);
+          }
+       }); 
+
+        // Append the selected prediction type to the FormData object
+        formData.append('predictionType', selectedType);
+
+        fetch(url, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("predictionResult").style.display = "block";
+            const resultText = document.getElementById("resultText");
+
+            let prediction = data.prediction
+
+            if(selectedType == "month"){
+              prediction = numberToMonth(Math.floor(Number(prediction)))
+            }
+
+            if (data.error) {
+              // Display the error message
+              resultText.textContent = `Error: ${data.error}`;
+              resultText.style.color = 'red';  // Change text color to red for error
+          } else {
+              // Display the successful prediction
+              resultText.style.color = 'white';  // Change text color to red for error
+
+              resultText.textContent = `The ${PREDICTION_MAP[selectedType].name} is predicted to be: ${prediction} ${PREDICTION_MAP[selectedType].unit}`;
+          }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
+  </body>
+</html>
