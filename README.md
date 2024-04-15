@@ -1,4 +1,4 @@
-![image] (./interface.png)
+![image](./interface.png)
 
 For our project, we created a weather prediction app that will give you a weather readout depending on user input.
 This app will prompt the user to select what type of weather they want to predict, and then ask the user to input data for the categories to make a prediction. 
